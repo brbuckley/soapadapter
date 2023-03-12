@@ -5,6 +5,8 @@ spring:
   web:
     resources:
       add-mappings: false
+  rabbitmq:
+    host: localhost
 
 management:
   info:

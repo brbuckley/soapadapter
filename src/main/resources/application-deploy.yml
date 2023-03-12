@@ -1,0 +1,6 @@
+spring:
+  rabbitmq:
+    host: rabbitmq
+
+supplier:
+  endpoint: 'http://wiremock:8081/liquorstore/com'
