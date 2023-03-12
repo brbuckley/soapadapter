@@ -1,0 +1,13 @@
+{
+  "request": {
+    "url": "/liquorstore/com",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "response.xml",
+    "headers": {
+      "Content-Type": "text/xml; charset=utf-8"
+    }
+  }
+}

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:tns="http://liquorstore.com/"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  xmlns:req="http://www.liquorstore.com/request"
+                  xmlns:res="http://www.liquorstore.com/response"
+                  name="PurchaseService"
+                  targetNamespace="http://liquorstore.com/">
+    <wsdl:documentation>Definition for a web service for Supplier B,
+        which can be used to create a supplier order from a purchase order.
+    </wsdl:documentation>
+
+    <!--
+        The `types` element defines the data types (XML elements)
+        that are used by the web service.
+     -->
+    <wsdl:types>
+
+        <xsd:schema targetNamespace="http://www.liquorstore.com/item" xmlns:item="http://www.liquorstore.com/item" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xsd:element name="item" type="item:item"/>
+            <xsd:complexType name="item">
+                <xsd:all>
+                    <xsd:element name="quantity" type="xsd:int"/>
+                    <xsd:element name="id" type="xsd:string"/>
+                </xsd:all>
+            </xsd:complexType>
+        </xsd:schema>
+
+        <xsd:schema targetNamespace="http://www.liquorstore.com/supplierrequest" xmlns:supplierrequest="http://www.liquorstore.com/supplierrequest" xmlns:item="http://www.liquorstore.com/item" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xsd:element name="supplierrequest" type="supplierrequest:supplierrequest"/>
+            <xsd:complexType name="supplierrequest">
+                <xsd:all>
+                    <xsd:element name="id" type="xsd:string"/>
+                    <xsd:element name="items">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="item" type="item:item" minOccurs="1" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:all>
+            </xsd:complexType>
+        </xsd:schema>
+
+        <xsd:schema targetNamespace="http://www.liquorstore.com/supplierresponse"
+                    xmlns:supplierresponse="http://www.liquorstore.com/supplierresponse">
+            <xsd:element name="supplierresponse" type="supplierresponse:supplierresponse"/>
+            <xsd:complexType name="supplierresponse">
+                <xsd:all>
+                    <xsd:element name="id" type="xsd:string"/>
+                    <xsd:element name="purchase_id" type="xsd:string"/>
+                </xsd:all>
+            </xsd:complexType>
+        </xsd:schema>
+
+        <xsd:schema targetNamespace="http://www.liquorstore.com/request"
+                    xmlns:supplierrequest="http://www.liquorstore.com/supplierrequest" attributeFormDefault="unqualified">
+
+            <xsd:element name="supplierrequest" type="supplierrequest:supplierrequest"/>
+
+        </xsd:schema>
+
+        <xsd:schema targetNamespace="http://www.liquorstore.com/response"
+                    xmlns:supplierresponse="http://www.liquorstore.com/supplierresponse">
+            <xsd:element name="supplierresponse" type="supplierresponse:supplierresponse"/>
+        </xsd:schema>
+
+    </wsdl:types>
+
+
+    <!--
+        A wsdl `message` element is used to define a message
+        exchanged between a web service, consisting of zero
+        or more `part`s.
+     -->
+
+    <wsdl:message name="MessageRequest">
+        <wsdl:part element="req:supplierrequest" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="MessageResponse">
+        <wsdl:part element="res:supplierresponse" name="parameters"/>
+    </wsdl:message>
+
+    <!--
+        A WSDL `portType` is used to combine multiple `message`s
+        (e.g. input, output) into a single operation.
+
+        Here we define three synchronous (input/output) operations
+        and the `message`s that must be used for each.
+     -->
+    <wsdl:portType name="PurchaseServiceSoapType">
+        <wsdl:documentation>Service to create a supplier order for the given purchase order</wsdl:documentation>
+        <wsdl:operation name="PostPurchase">
+            <wsdl:input message="tns:MessageRequest"/>
+            <wsdl:output message="tns:MessageResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <!--
+        The `binding` element defines exactly how each
+        `operation` will take place over the network.
+        In this case, we are using SOAP.
+     -->
+    <wsdl:binding name="PurchaseServiceSOAPBinding" type="tns:PurchaseServiceSoapType">
+        <soap:binding style="document"
+                      transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="PostPurchase">
+            <soap:operation
+                    soapAction="http://liquorstore.com/PostPurchase"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <!--
+        The `service` element finally says where the service
+        can be accessed from - in other words, its endpoint.
+     -->
+    <wsdl:service name="PurchaseServiceImplService">
+        <wsdl:port binding="tns:PurchaseServiceSOAPBinding" name="PurchaseServiceSOAP">
+            <soap:address location="http://localhost:8081/liquorstore/com"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
